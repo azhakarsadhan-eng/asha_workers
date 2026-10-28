@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ASHA Pregnancy Tracking System — Offline-First Maternal Care Platform</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <meta name="theme-color" content="#0284c7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-section">
+        <div class="brand-icon">⚕</div>
+        <div>
+          <div class="brand-title" data-i18n="app_title">ASHA Pregnancy Tracking System</div>
+          <div class="brand-subtitle" data-i18n="app_subtitle">Offline Maternal & Child Healthcare Platform</div>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- User Role Switcher for Live Demo -->
+        <select id="role-switcher" class="form-control" style="width: auto; height: 36px; padding: 0.2rem 0.5rem; font-size: 0.85rem;" title="Switch Role to test RBAC">
+          <option value="asha_lakshmi">👩‍⚕️ ASHA (Lakshmi - Alanganallur)</option>
+          <option value="anm_meena">🩺 ANM Nurse (Meenakshi - SC)</option>
+          <option value="mo_suresh">👨‍⚕️ Medical Officer (Dr. Suresh - PHC)</option>
+          <option value="supervisor_radha">📊 Supervisor (Radha - Block)</option>
+          <option value="admin_system">⚙️ System Administrator</option>
+        </select>
+
+        <!-- Language Selector -->
+        <select id="lang-selector" class="form-control" style="width: auto; height: 36px; padding: 0.2rem 0.5rem; font-size: 0.85rem;">
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="en">English</option>
+        </select>
+
+        <!-- Simulated Offline Toggle -->
+        <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; font-weight: 600; cursor: pointer; background: #f1f5f9; padding: 0.35rem 0.65rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+          <input type="checkbox" id="offline-sim-toggle">
+          <span>Simulate Offline</span>
+        </label>
+
+        <!-- Sync Indicator & Manual Sync Button -->
+        <span id="header-sync-status" class="status-pill status-online">✓ Online</span>
+        <button id="header-sync-btn" class="btn btn-outline btn-sm">
+          🔄 <span data-i18n="sync_now_btn">Sync Pending Records</span>
+          <span id="sync-badge-count" style="display:none; background:#ef4444; color:#fff; border-radius:50%; padding:0.1rem 0.4rem; font-size:0.75rem; margin-left:0.3rem;">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active User & Scope Bar -->
+    <div style="background-color: #f8fafc; padding: 0.35rem 1rem; border-top: 1px solid #e2e8f0; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center;">
+      <div id="current-user-badge">Loading user profile...</div>
+      <div style="color: var(--text-muted); font-size: 0.78rem;">National Health Mission Reference Prototype (Madurai District)</div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-scroll">
+      <button class="nav-tab active" data-view="dashboard">
+        📊 <span data-i18n="nav_dashboard">Dashboard</span>
+      </button>
+      <button class="nav-tab" data-view="beneficiaries">
+        👥 <span data-i18n="nav_beneficiaries">Beneficiaries</span>
+      </button>
+      <button class="nav-tab" data-view="registration">
+        📝 <span data-i18n="nav_registration">New Registration</span>
+      </button>
+      <button class="nav-tab" data-view="anc">
+        🩺 <span data-i18n="nav_anc">ANC Visits</span>
+      </button>
+      <button class="nav-tab" data-view="high_risk">
+        ⚡ <span data-i18n="nav_high_risk">High-Risk Pregnancy</span>
+      </button>
+      <button class="nav-tab" data-view="referrals">
+        🚨 <span data-i18n="nav_referrals">Danger Signs & Referrals</span>
+      </button>
+      <button class="nav-tab" data-view="pnc">
+        👶 <span data-i18n="nav_pnc">Postnatal Care</span>
+      </button>
+      <button class="nav-tab" data-view="home_visits">
+        🏡 <span data-i18n="nav_home_visits">Home Visits</span>
+      </button>
+      <button class="nav-tab" data-view="supervisor" style="display:none;">
+        📈 <span data-i18n="nav_supervisor">Supervisor Analytics</span>
+      </button>
+      <button class="nav-tab" data-view="assistant">
+        🤖 <span data-i18n="nav_assistant">Maternal Health AI</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="main-container">
+    <div id="view-dashboard" class="view-section active"></div>
+    <div id="view-beneficiaries" class="view-section"></div>
+    <div id="view-registration" class="view-section"></div>
+    <div id="view-anc" class="view-section"></div>
+    <div id="view-high_risk" class="view-section"></div>
+    <div id="view-referrals" class="view-section"></div>
+    <div id="view-pnc" class="view-section"></div>
+    <div id="view-home_visits" class="view-section"></div>
+    <div id="view-supervisor" class="view-section"></div>
+    <div id="view-assistant" class="view-section"></div>
+  </main>
+
+  <!-- Universal Modal -->
+  <div id="app-modal" class="modal-overlay">
+    <div class="modal-content" id="modal-body"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="app-toast" style="display:none; position:fixed; bottom:20px; right:20px; color:#fff; padding:0.85rem 1.25rem; border-radius:8px; z-index:1000; box-shadow:0 4px 12px rgba(0,0,0,0.2); font-weight:600; max-width:90%;"></div>
+
+  <!-- Scripts -->
+  <script src="/static/js/i18n/en.js"></script>
+  <script src="/static/js/i18n/ta.js"></script>
+  <script src="/static/js/db/local_db.js"></script>
+  <script src="/static/js/services/api.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
+
